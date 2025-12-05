@@ -10,7 +10,7 @@ const translations = {
     billTo: 'TAGIH KEPADA',
     date: 'Tanggal',
     itemDescription: 'DESKRIPSI ITEM',
-    quantity: 'JUMLAH',
+    quantity: 'JML',
     price: 'HARGA',
     total: 'TOTAL',
     packageIncludes: 'Paket Include :',
@@ -22,7 +22,7 @@ const translations = {
     billTo: 'BILL TO',
     date: 'Date',
     itemDescription: 'ITEM DESCRIPTION',
-    quantity: 'QUANTITY',
+    quantity: 'QTY',
     price: 'PRICE',
     total: 'TOTAL',
     packageIncludes: 'Package Includes :',
@@ -81,7 +81,7 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
             className="relative overflow-hidden"
             style={{
               background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
-              minHeight: '180px',
+              minHeight: '120px',
             }}
           >
             {/* Decorative wave pattern */}
@@ -105,22 +105,22 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
             </svg>
 
             {/* Header content */}
-            <div className="relative z-10 p-6">
+            <div className="relative z-10 p-4">
               {/* Company Logo */}
               {data.companyLogo && (
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-2">
                   <img
                     src={data.companyLogo}
                     alt="Company Logo"
-                    className="w-10 h-10 object-contain"
+                    className="w-8 h-8 object-contain"
                   />
-                  <span className="text-white text-sm font-medium">{data.companyName}</span>
+                  <span className="text-white text-xs font-medium">{data.companyName}</span>
                 </div>
               )}
               
               {/* INVOICE Title - Only show when no custom header */}
               <h1 
-                className="text-6xl md:text-7xl font-black text-white tracking-tight"
+                className="text-4xl font-black text-white tracking-tight"
                 style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}
               >
                 INVOICE
@@ -130,29 +130,29 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
         )}
 
         {/* Content */}
-        <div className="px-8 py-6">
+        <div className="px-4 py-3">
           {/* Bill To & Date */}
-          <div className="flex justify-between items-start mb-8">
+          <div className="flex justify-between items-start mb-4">
             <div>
               <p 
-                className="text-sm font-semibold uppercase tracking-wider mb-1"
+                className="text-xs font-semibold uppercase tracking-wider mb-0.5"
                 style={{ color: primaryColor }}
               >
                 {t.billTo}
               </p>
-              <p className="text-lg font-bold text-gray-900">{data.clientName}</p>
+              <p className="text-sm font-bold text-gray-900">{data.clientName}</p>
             </div>
             <div className="text-right">
-              <span className="text-sm text-gray-500 font-medium">{t.date} : </span>
-              <span className="text-sm text-gray-700">{formatDate(data.invoiceDate, language)}</span>
+              <span className="text-xs text-gray-500 font-medium">{t.date} : </span>
+              <span className="text-xs text-gray-700">{formatDate(data.invoiceDate, language)}</span>
             </div>
           </div>
 
           {/* Items Table */}
-          <div className="mb-6">
+          <div className="mb-4">
             {/* Table Header */}
             <div 
-              className="grid grid-cols-12 gap-4 py-3 px-4 text-sm font-semibold uppercase tracking-wider"
+              className="grid grid-cols-12 gap-1 py-2 px-2 text-[10px] font-semibold uppercase tracking-wider"
               style={{ 
                 background: `linear-gradient(90deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
                 color: 'white'
@@ -168,25 +168,25 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
             {data.items.map((item) => (
               <div key={item.id} className="border-b border-gray-100">
                 {/* Item Row */}
-                <div className="grid grid-cols-12 gap-4 py-4 px-4 items-start">
+                <div className="grid grid-cols-12 gap-1 py-2 px-2 items-start">
                   <div className="col-span-5">
-                    <p className="font-bold text-gray-900 uppercase">{item.description || '-'}</p>
+                    <p className="font-bold text-gray-900 uppercase text-xs">{item.description || '-'}</p>
                     {item.subDescription && (
-                      <p className="text-sm text-gray-500 mt-1">{item.subDescription}</p>
+                      <p className="text-[10px] text-gray-500 mt-0.5">{item.subDescription}</p>
                     )}
                   </div>
-                  <div className="col-span-2 text-center text-gray-700">{item.quantity}</div>
-                  <div className="col-span-2 text-center text-gray-700">{formatCurrency(item.price)}</div>
-                  <div className="col-span-3 text-right font-medium text-gray-900">
+                  <div className="col-span-2 text-center text-gray-700 text-xs">{item.quantity}</div>
+                  <div className="col-span-2 text-center text-gray-700 text-[10px]">{formatCurrency(item.price)}</div>
+                  <div className="col-span-3 text-right font-medium text-gray-900 text-[10px]">
                     {formatCurrency(item.quantity * item.price)}
                   </div>
                 </div>
 
                 {/* Item Details */}
                 {item.details && (
-                  <div className="px-4 pb-4">
-                    <p className="font-semibold text-gray-800 mb-2">{t.packageIncludes}</p>
-                    <div className="text-sm text-gray-600 whitespace-pre-line">
+                  <div className="px-2 pb-2">
+                    <p className="font-semibold text-gray-800 mb-1 text-[10px]">{t.packageIncludes}</p>
+                    <div className="text-[10px] text-gray-600 whitespace-pre-line leading-tight">
                       {item.details}
                     </div>
                   </div>
@@ -197,37 +197,37 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 
           {/* Separator Line */}
           <div 
-            className="h-1 w-full mb-6"
+            className="h-0.5 w-full mb-3"
             style={{ background: `linear-gradient(90deg, ${primaryColor} 0%, ${secondaryColor} 100%)` }}
           />
 
           {/* Total */}
-          <div className="flex justify-end mb-8">
-            <div className="flex items-center gap-8">
-              <span className="text-lg font-bold text-gray-700">{t.total} :</span>
-              <span className="text-lg font-medium text-gray-900">{formatCurrency(total)}</span>
+          <div className="flex justify-end mb-4">
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-bold text-gray-700">{t.total} :</span>
+              <span className="text-sm font-medium text-gray-900">{formatCurrency(total)}</span>
             </div>
           </div>
 
           {/* Notes & Payment Info */}
           <div className="mt-auto">
             {data.notes && (
-              <div className="mb-4">
-                <p className="font-bold text-gray-800 uppercase text-sm mb-2">{t.notes}</p>
-                <p className="text-sm text-gray-600">{data.notes}</p>
+              <div className="mb-3">
+                <p className="font-bold text-gray-800 uppercase text-[10px] mb-1">{t.notes}</p>
+                <p className="text-[10px] text-gray-600 leading-tight">{data.notes}</p>
               </div>
             )}
 
             {/* Bank Account Info */}
             {(data.bankName || data.bankAccountNumber || data.bankAccountName) && (
-              <div className="mb-6">
+              <div className="mb-3">
                 <p 
-                  className="text-xs font-semibold uppercase tracking-wider mb-2"
+                  className="text-[10px] font-semibold uppercase tracking-wider mb-1"
                   style={{ color: primaryColor }}
                 >
                   {t.paymentTo}
                 </p>
-                <div className="text-sm text-gray-800">
+                <div className="text-[10px] text-gray-800">
                   {data.bankAccountName && <p className="font-bold">{data.bankAccountName}</p>}
                   {data.bankName && <p>{data.bankName}</p>}
                   {data.bankAccountNumber && <p>{data.bankAccountNumber}</p>}
@@ -237,37 +237,37 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 
             {/* Terms and Conditions */}
             {data.termsAndConditions && (
-              <div className="mb-6">
-                <p className="font-bold text-gray-800 uppercase text-sm mb-2">{t.termsConditions}</p>
-                <p className="text-sm text-gray-600 whitespace-pre-line">{data.termsAndConditions}</p>
+              <div className="mb-3">
+                <p className="font-bold text-gray-800 uppercase text-[10px] mb-1">{t.termsConditions}</p>
+                <p className="text-[10px] text-gray-600 whitespace-pre-line leading-tight">{data.termsAndConditions}</p>
               </div>
             )}
 
             {/* Footer with company logo */}
-            <div className="flex justify-between items-end pt-4 border-t border-gray-100">
+            <div className="flex justify-between items-end pt-2 border-t border-gray-100">
               {/* Signature */}
               {data.signature && (
                 <div className="text-center">
                   <img
                     src={data.signature}
                     alt="Tanda Tangan"
-                    className="h-16 object-contain"
+                    className="h-12 object-contain"
                   />
-                  <div className="border-t border-gray-300 mt-2 pt-1 px-4">
-                    <p className="text-xs text-gray-500">{data.companyName}</p>
+                  <div className="border-t border-gray-300 mt-1 pt-0.5 px-2">
+                    <p className="text-[10px] text-gray-500">{data.companyName}</p>
                   </div>
                 </div>
               )}
               
               {/* Company Logo Footer */}
               {data.companyLogo && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <img
                     src={data.companyLogo}
                     alt="Company Logo"
-                    className="w-8 h-8 object-contain"
+                    className="w-6 h-6 object-contain"
                   />
-                  <span className="text-sm font-medium text-gray-700">{data.companyName}</span>
+                  <span className="text-xs font-medium text-gray-700">{data.companyName}</span>
                 </div>
               )}
             </div>

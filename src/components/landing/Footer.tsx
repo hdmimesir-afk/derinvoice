@@ -1,4 +1,4 @@
-import { FileText, Heart } from 'lucide-react';
+import { FileText, Instagram } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -12,10 +12,16 @@ const Footer = () => {
             <span className="font-bold text-base md:text-xl">Simple Invoice Studio</span>
           </div>
 
-          <div className="flex items-center gap-1 text-slate-400 text-xs md:text-sm">
-            <span>Dibuat dengan</span>
-            <Heart className="w-3 h-3 md:w-4 md:h-4 text-red-500 fill-red-500" />
-            <span>di Indonesia • {new Date().getFullYear()}</span>
+          <div className="flex items-center gap-2 text-slate-400 text-xs md:text-sm">
+            <span>Dibuat oleh Daru dari AIGYPT</span>
+            <a 
+              href="https://instagram.com/darufm" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-[#ccff00] transition-colors"
+            >
+              <Instagram className="w-4 h-4 md:w-5 md:h-5" />
+            </a>
           </div>
 
           <div className="flex items-center gap-4 md:gap-6">

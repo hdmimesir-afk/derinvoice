@@ -22,6 +22,12 @@ export interface InvoiceData {
   items: InvoiceItem[];
   notes: string;
   signature?: string;
+  // Bank account info
+  bankName: string;
+  bankAccountNumber: string;
+  bankAccountName: string;
+  // Terms and conditions
+  termsAndConditions: string;
   // Custom color settings
   primaryColor: string;
   secondaryColor: string;
@@ -57,6 +63,10 @@ export const defaultInvoiceData: InvoiceData = {
   ],
   notes: 'Terima kasih atas kepercayaan Anda.',
   signature: '',
+  bankName: '',
+  bankAccountNumber: '',
+  bankAccountName: '',
+  termsAndConditions: '',
   primaryColor: '#5A8F7B',
   secondaryColor: '#7AB89D',
   accentColor: '#3D6B5C',

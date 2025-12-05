@@ -175,10 +175,46 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
             </div>
           </div>
 
+          {/* Bank Account Info */}
+          {(data.bankName || data.bankAccountNumber || data.bankAccountName) && (
+            <div
+              className="p-4 rounded-lg mb-6"
+              style={{ backgroundColor: `${primaryColor}10` }}
+            >
+              <h3 className="text-sm font-semibold mb-3" style={{ color: primaryColor }}>
+                Informasi Pembayaran
+              </h3>
+              <div className="space-y-1 text-sm text-gray-600">
+                {data.bankName && (
+                  <p><span className="font-medium">Bank:</span> {data.bankName}</p>
+                )}
+                {data.bankAccountNumber && (
+                  <p><span className="font-medium">No. Rekening:</span> {data.bankAccountNumber}</p>
+                )}
+                {data.bankAccountName && (
+                  <p><span className="font-medium">Atas Nama:</span> {data.bankAccountName}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Terms and Conditions */}
+          {data.termsAndConditions && (
+            <div
+              className="p-4 rounded-lg mb-6 border"
+              style={{ borderColor: `${primaryColor}30` }}
+            >
+              <h3 className="text-sm font-semibold mb-2" style={{ color: primaryColor }}>
+                Syarat & Ketentuan
+              </h3>
+              <p className="text-sm text-gray-600 whitespace-pre-line">{data.termsAndConditions}</p>
+            </div>
+          )}
+
           {/* Notes */}
           {data.notes && (
             <div
-              className="p-4 rounded-lg mb-8"
+              className="p-4 rounded-lg mb-6"
               style={{ backgroundColor: `${primaryColor}10` }}
             >
               <h3 className="text-sm font-semibold mb-2" style={{ color: primaryColor }}>

@@ -1,9 +1,36 @@
 import { forwardRef } from 'react';
-import { InvoiceData } from '@/types/invoice';
+import { InvoiceData, Language } from '@/types/invoice';
 
 interface InvoicePreviewProps {
   data: InvoiceData;
 }
+
+const translations = {
+  id: {
+    billTo: 'TAGIH KEPADA',
+    date: 'Tanggal',
+    itemDescription: 'DESKRIPSI ITEM',
+    quantity: 'JUMLAH',
+    price: 'HARGA',
+    total: 'TOTAL',
+    packageIncludes: 'Paket Include :',
+    notes: 'CATATAN :',
+    paymentTo: 'SILAKAN MELAKUKAN PEMBAYARAN KE :',
+    termsConditions: 'Syarat & Ketentuan :',
+  },
+  en: {
+    billTo: 'BILL TO',
+    date: 'Date',
+    itemDescription: 'ITEM DESCRIPTION',
+    quantity: 'QUANTITY',
+    price: 'PRICE',
+    total: 'TOTAL',
+    packageIncludes: 'Package Includes :',
+    notes: 'NOTES :',
+    paymentTo: 'PLEASE MAKE PAYMENT TO :',
+    termsConditions: 'Terms & Conditions :',
+  },
+};
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('id-ID', {
@@ -13,9 +40,10 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-const formatDate = (dateString: string) => {
+const formatDate = (dateString: string, language: Language) => {
   if (!dateString) return '-';
-  return new Date(dateString).toLocaleDateString('en-US', {
+  const locale = language === 'id' ? 'id-ID' : 'en-US';
+  return new Date(dateString).toLocaleDateString(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -25,7 +53,8 @@ const formatDate = (dateString: string) => {
 const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
   ({ data }, ref) => {
     const total = data.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
-    const { primaryColor, secondaryColor } = data;
+    const { primaryColor, secondaryColor, language } = data;
+    const t = translations[language];
 
     return (
       <div
@@ -37,57 +66,68 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
           fontFamily: 'Poppins, sans-serif',
         }}
       >
-        {/* Header with wave pattern */}
-        <div
-          className="relative overflow-hidden"
-          style={{
-            background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
-            minHeight: '180px',
-          }}
-        >
-          {/* Decorative wave pattern */}
-          <svg
-            className="absolute inset-0 w-full h-full opacity-20"
-            viewBox="0 0 800 200"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0,100 C150,150 350,50 500,100 C650,150 750,50 800,100 L800,200 L0,200 Z"
-              fill="rgba(255,255,255,0.1)"
+        {/* Custom Header Image - No INVOICE text */}
+        {data.headerImage ? (
+          <div className="w-full">
+            <img
+              src={data.headerImage}
+              alt="Invoice Header"
+              className="w-full h-auto object-cover"
             />
-            <path
-              d="M0,120 C200,80 400,160 600,100 C750,60 800,120 800,120 L800,200 L0,200 Z"
-              fill="rgba(255,255,255,0.15)"
-            />
-            <path
-              d="M0,150 C100,130 300,180 500,140 C700,100 800,160 800,160 L800,200 L0,200 Z"
-              fill="rgba(255,255,255,0.1)"
-            />
-          </svg>
-
-          {/* Header content */}
-          <div className="relative z-10 p-6">
-            {/* Company Logo */}
-            {data.companyLogo && (
-              <div className="flex items-center gap-2 mb-4">
-                <img
-                  src={data.companyLogo}
-                  alt="Company Logo"
-                  className="w-10 h-10 object-contain"
-                />
-                <span className="text-white text-sm font-medium">{data.companyName}</span>
-              </div>
-            )}
-            
-            {/* INVOICE Title */}
-            <h1 
-              className="text-6xl md:text-7xl font-black text-white tracking-tight"
-              style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}
-            >
-              INVOICE
-            </h1>
           </div>
-        </div>
+        ) : (
+          /* Default Header with wave pattern */
+          <div
+            className="relative overflow-hidden"
+            style={{
+              background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+              minHeight: '180px',
+            }}
+          >
+            {/* Decorative wave pattern */}
+            <svg
+              className="absolute inset-0 w-full h-full opacity-20"
+              viewBox="0 0 800 200"
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M0,100 C150,150 350,50 500,100 C650,150 750,50 800,100 L800,200 L0,200 Z"
+                fill="rgba(255,255,255,0.1)"
+              />
+              <path
+                d="M0,120 C200,80 400,160 600,100 C750,60 800,120 800,120 L800,200 L0,200 Z"
+                fill="rgba(255,255,255,0.15)"
+              />
+              <path
+                d="M0,150 C100,130 300,180 500,140 C700,100 800,160 800,160 L800,200 L0,200 Z"
+                fill="rgba(255,255,255,0.1)"
+              />
+            </svg>
+
+            {/* Header content */}
+            <div className="relative z-10 p-6">
+              {/* Company Logo */}
+              {data.companyLogo && (
+                <div className="flex items-center gap-2 mb-4">
+                  <img
+                    src={data.companyLogo}
+                    alt="Company Logo"
+                    className="w-10 h-10 object-contain"
+                  />
+                  <span className="text-white text-sm font-medium">{data.companyName}</span>
+                </div>
+              )}
+              
+              {/* INVOICE Title - Only show when no custom header */}
+              <h1 
+                className="text-6xl md:text-7xl font-black text-white tracking-tight"
+                style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}
+              >
+                INVOICE
+              </h1>
+            </div>
+          </div>
+        )}
 
         {/* Content */}
         <div className="px-8 py-6">
@@ -98,13 +138,13 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
                 className="text-sm font-semibold uppercase tracking-wider mb-1"
                 style={{ color: primaryColor }}
               >
-                BILL TO
+                {t.billTo}
               </p>
               <p className="text-lg font-bold text-gray-900">{data.clientName}</p>
             </div>
             <div className="text-right">
-              <span className="text-sm text-gray-500 font-medium">Date : </span>
-              <span className="text-sm text-gray-700">{formatDate(data.invoiceDate)}</span>
+              <span className="text-sm text-gray-500 font-medium">{t.date} : </span>
+              <span className="text-sm text-gray-700">{formatDate(data.invoiceDate, language)}</span>
             </div>
           </div>
 
@@ -118,10 +158,10 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
                 color: 'white'
               }}
             >
-              <div className="col-span-5">ITEM DESCRIPTION</div>
-              <div className="col-span-2 text-center">QUANTITY</div>
-              <div className="col-span-2 text-center">PRICE</div>
-              <div className="col-span-3 text-right">TOTAL</div>
+              <div className="col-span-5">{t.itemDescription}</div>
+              <div className="col-span-2 text-center">{t.quantity}</div>
+              <div className="col-span-2 text-center">{t.price}</div>
+              <div className="col-span-3 text-right">{t.total}</div>
             </div>
 
             {/* Table Body */}
@@ -145,7 +185,7 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
                 {/* Item Details */}
                 {item.details && (
                   <div className="px-4 pb-4">
-                    <p className="font-semibold text-gray-800 mb-2">Paket Include :</p>
+                    <p className="font-semibold text-gray-800 mb-2">{t.packageIncludes}</p>
                     <div className="text-sm text-gray-600 whitespace-pre-line">
                       {item.details}
                     </div>
@@ -164,7 +204,7 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
           {/* Total */}
           <div className="flex justify-end mb-8">
             <div className="flex items-center gap-8">
-              <span className="text-lg font-bold text-gray-700">Total :</span>
+              <span className="text-lg font-bold text-gray-700">{t.total} :</span>
               <span className="text-lg font-medium text-gray-900">{formatCurrency(total)}</span>
             </div>
           </div>
@@ -173,7 +213,7 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
           <div className="mt-auto">
             {data.notes && (
               <div className="mb-4">
-                <p className="font-bold text-gray-800 uppercase text-sm mb-2">NOTES :</p>
+                <p className="font-bold text-gray-800 uppercase text-sm mb-2">{t.notes}</p>
                 <p className="text-sm text-gray-600">{data.notes}</p>
               </div>
             )}
@@ -185,7 +225,7 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
                   className="text-xs font-semibold uppercase tracking-wider mb-2"
                   style={{ color: primaryColor }}
                 >
-                  SILAKAN MELAKUKAN PEMBAYARAN KE :
+                  {t.paymentTo}
                 </p>
                 <div className="text-sm text-gray-800">
                   {data.bankAccountName && <p className="font-bold">{data.bankAccountName}</p>}
@@ -198,7 +238,7 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
             {/* Terms and Conditions */}
             {data.termsAndConditions && (
               <div className="mb-6">
-                <p className="font-bold text-gray-800 uppercase text-sm mb-2">Syarat & Ketentuan :</p>
+                <p className="font-bold text-gray-800 uppercase text-sm mb-2">{t.termsConditions}</p>
                 <p className="text-sm text-gray-600 whitespace-pre-line">{data.termsAndConditions}</p>
               </div>
             )}

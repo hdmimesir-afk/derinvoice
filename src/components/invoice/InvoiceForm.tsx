@@ -5,7 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { InvoiceData, InvoiceItem } from '@/types/invoice';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { InvoiceData, InvoiceItem, Language } from '@/types/invoice';
 import { toast } from 'sonner';
 import { useRef, useState } from 'react';
 
@@ -249,7 +250,7 @@ const InvoiceForm = ({ data, onChange }: InvoiceFormProps) => {
             Detail Invoice
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+        <CardContent className="space-y-3 px-3 md:px-6 pb-3 md:pb-6">
           <div className="grid grid-cols-3 gap-2">
             <div>
               <Label htmlFor="invoiceNumber" className="text-xs md:text-sm">No. Invoice</Label>
@@ -281,6 +282,23 @@ const InvoiceForm = ({ data, onChange }: InvoiceFormProps) => {
                 className="h-8 md:h-10 text-xs md:text-sm mt-1"
               />
             </div>
+          </div>
+          
+          {/* Language Selector */}
+          <div>
+            <Label className="text-xs md:text-sm">Bahasa Invoice</Label>
+            <Select
+              value={data.language}
+              onValueChange={(value: Language) => onChange({ ...data, language: value })}
+            >
+              <SelectTrigger className="h-8 md:h-10 text-xs md:text-sm mt-1">
+                <SelectValue placeholder="Pilih bahasa" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="id">🇮🇩 Indonesia</SelectItem>
+                <SelectItem value="en">🇺🇸 English</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>

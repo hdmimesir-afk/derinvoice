@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
-import { Download, Eye, FileEdit, ImageIcon, Save, FolderOpen } from 'lucide-react';
+import { Download, Eye, FileEdit, ImageIcon, Save, FolderOpen, LogIn, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -12,6 +13,8 @@ import TemplateLoadDialog from './TemplateLoadDialog';
 import { InvoiceData, defaultInvoiceData } from '@/types/invoice';
 import { usePrint } from '@/hooks/use-print';
 import { useExportImage } from '@/hooks/use-export-image';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 const InvoiceEditor = () => {
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(defaultInvoiceData);
@@ -22,6 +25,23 @@ const InvoiceEditor = () => {
   const previewRef = useRef<HTMLDivElement>(null);
   const { handlePrint } = usePrint(previewRef);
   const { handleExportPNG } = useExportImage(previewRef);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleTemplateAction = (action: 'save' | 'load') => {
+    if (!user) {
+      toast.error('Silakan login untuk menyimpan/memuat template');
+      navigate('/auth');
+      return;
+    }
+    if (action === 'save') setSaveDialogOpen(true);
+    else setLoadDialogOpen(true);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success('Berhasil keluar');
+  };
 
   const handleHeaderChange = (headerImage: string | undefined) => {
     setInvoiceData({ ...invoiceData, headerImage });
@@ -66,26 +86,48 @@ const InvoiceEditor = () => {
           </p>
         </div>
 
-        {/* Template Actions - Mobile */}
+        {/* Auth & Template Actions - Mobile */}
         <div className="flex md:hidden gap-2 mb-3">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setLoadDialogOpen(true)}
-            className="flex-1 h-9 text-xs"
-          >
-            <FolderOpen className="w-3.5 h-3.5 mr-1" />
-            Muat
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setSaveDialogOpen(true)}
-            className="flex-1 h-9 text-xs"
-          >
-            <Save className="w-3.5 h-3.5 mr-1" />
-            Simpan
-          </Button>
+          {user ? (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleTemplateAction('load')}
+                className="flex-1 h-9 text-xs"
+              >
+                <FolderOpen className="w-3.5 h-3.5 mr-1" />
+                Muat
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleTemplateAction('save')}
+                className="flex-1 h-9 text-xs"
+              >
+                <Save className="w-3.5 h-3.5 mr-1" />
+                Simpan
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={handleSignOut}
+                className="h-9 text-xs px-2"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </Button>
+            </>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => navigate('/auth')}
+              className="flex-1 h-9 text-xs"
+            >
+              <LogIn className="w-3.5 h-3.5 mr-1" />
+              Login untuk Simpan Template
+            </Button>
+          )}
         </div>
 
         {/* Mobile Tab Switcher */}
@@ -172,25 +214,49 @@ const InvoiceEditor = () => {
                 <Eye className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="font-medium text-sm md:text-base">Preview Invoice</span>
               </div>
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setLoadDialogOpen(true)}
-                  className="h-9"
-                >
-                  <FolderOpen className="w-4 h-4 mr-2" />
-                  Muat Template
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setSaveDialogOpen(true)}
-                  className="h-9"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  Simpan Template
-                </Button>
+              <div className="flex gap-2 flex-wrap items-center">
+                {user ? (
+                  <>
+                    <span className="text-xs text-slate-500 mr-2">{user.email}</span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleTemplateAction('load')}
+                      className="h-9"
+                    >
+                      <FolderOpen className="w-4 h-4 mr-2" />
+                      Muat Template
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleTemplateAction('save')}
+                      className="h-9"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      Simpan Template
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleSignOut}
+                      className="h-9"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Keluar
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => navigate('/auth')}
+                    className="h-9"
+                  >
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Login untuk Simpan Template
+                  </Button>
+                )}
                 <Button
                   size="lg"
                   className="bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] px-4 md:px-6 py-2 md:py-3 text-sm md:text-base"

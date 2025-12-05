@@ -14,6 +14,7 @@ import {
 import { InvoiceData } from '@/types/invoice';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useAuth } from '@/hooks/useAuth';
 
 interface TemplateSaveDialogProps {
   open: boolean;
@@ -24,10 +25,16 @@ interface TemplateSaveDialogProps {
 const TemplateSaveDialog = ({ open, onOpenChange, invoiceData }: TemplateSaveDialogProps) => {
   const [templateName, setTemplateName] = useState('');
   const [saving, setSaving] = useState(false);
+  const { user } = useAuth();
 
   const handleSave = async () => {
     if (!templateName.trim()) {
       toast.error('Masukkan nama template');
+      return;
+    }
+
+    if (!user) {
+      toast.error('Silakan login terlebih dahulu');
       return;
     }
 
@@ -38,6 +45,7 @@ const TemplateSaveDialog = ({ open, onOpenChange, invoiceData }: TemplateSaveDia
         .insert([{
           name: templateName.trim(),
           invoice_data: JSON.parse(JSON.stringify(invoiceData)),
+          user_id: user.id,
         }]);
 
       if (error) throw error;

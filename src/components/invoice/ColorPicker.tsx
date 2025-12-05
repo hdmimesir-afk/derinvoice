@@ -1,6 +1,8 @@
+import { useState } from 'react';
+import { HexColorPicker, HexColorInput } from 'react-colorful';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface ColorPickerProps {
   primaryColor: string;
@@ -17,6 +19,45 @@ const presetColors = [
   { name: 'Red', primary: '#EF4444', secondary: '#F87171', accent: '#DC2626' },
   { name: 'Teal', primary: '#14B8A6', secondary: '#2DD4BF', accent: '#0D9488' },
 ];
+
+interface ColorWheelPickerProps {
+  color: string;
+  onChange: (color: string) => void;
+  label: string;
+}
+
+const ColorWheelPicker = ({ color, onChange, label }: ColorWheelPickerProps) => {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="flex items-center gap-2 p-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors w-full">
+          <div 
+            className="w-8 h-8 rounded-lg border-2 border-slate-200 shadow-inner" 
+            style={{ backgroundColor: color }}
+          />
+          <div className="flex-1 text-left">
+            <p className="text-[10px] text-slate-500">{label}</p>
+            <p className="text-xs font-mono font-medium">{color.toUpperCase()}</p>
+          </div>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-3" align="start">
+        <div className="space-y-3">
+          <HexColorPicker color={color} onChange={onChange} />
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500">#</span>
+            <HexColorInput 
+              color={color} 
+              onChange={onChange}
+              className="flex-1 h-8 px-2 text-xs font-mono border border-slate-200 rounded uppercase"
+              prefixed={false}
+            />
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 const ColorPicker = ({ primaryColor, secondaryColor, accentColor, onColorChange }: ColorPickerProps) => {
   const handlePresetClick = (preset: typeof presetColors[0]) => {
@@ -51,56 +92,23 @@ const ColorPicker = ({ primaryColor, secondaryColor, accentColor, onColorChange 
         ))}
       </div>
 
-      {/* Custom Colors */}
+      {/* Color Wheel Pickers */}
       <div className="grid grid-cols-3 gap-2">
-        <div>
-          <Label className="text-[10px] md:text-xs text-slate-600">Primary</Label>
-          <div className="flex items-center gap-1 mt-1">
-            <input
-              type="color"
-              value={primaryColor}
-              onChange={(e) => onColorChange({ primaryColor: e.target.value, secondaryColor, accentColor })}
-              className="w-8 h-8 rounded cursor-pointer border-0"
-            />
-            <Input
-              value={primaryColor}
-              onChange={(e) => onColorChange({ primaryColor: e.target.value, secondaryColor, accentColor })}
-              className="h-8 text-xs flex-1"
-            />
-          </div>
-        </div>
-        <div>
-          <Label className="text-[10px] md:text-xs text-slate-600">Secondary</Label>
-          <div className="flex items-center gap-1 mt-1">
-            <input
-              type="color"
-              value={secondaryColor}
-              onChange={(e) => onColorChange({ primaryColor, secondaryColor: e.target.value, accentColor })}
-              className="w-8 h-8 rounded cursor-pointer border-0"
-            />
-            <Input
-              value={secondaryColor}
-              onChange={(e) => onColorChange({ primaryColor, secondaryColor: e.target.value, accentColor })}
-              className="h-8 text-xs flex-1"
-            />
-          </div>
-        </div>
-        <div>
-          <Label className="text-[10px] md:text-xs text-slate-600">Accent</Label>
-          <div className="flex items-center gap-1 mt-1">
-            <input
-              type="color"
-              value={accentColor}
-              onChange={(e) => onColorChange({ primaryColor, secondaryColor, accentColor: e.target.value })}
-              className="w-8 h-8 rounded cursor-pointer border-0"
-            />
-            <Input
-              value={accentColor}
-              onChange={(e) => onColorChange({ primaryColor, secondaryColor, accentColor: e.target.value })}
-              className="h-8 text-xs flex-1"
-            />
-          </div>
-        </div>
+        <ColorWheelPicker 
+          color={primaryColor}
+          onChange={(color) => onColorChange({ primaryColor: color, secondaryColor, accentColor })}
+          label="Primary"
+        />
+        <ColorWheelPicker 
+          color={secondaryColor}
+          onChange={(color) => onColorChange({ primaryColor, secondaryColor: color, accentColor })}
+          label="Secondary"
+        />
+        <ColorWheelPicker 
+          color={accentColor}
+          onChange={(color) => onColorChange({ primaryColor, secondaryColor, accentColor: color })}
+          label="Accent"
+        />
       </div>
     </div>
   );

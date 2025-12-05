@@ -394,11 +394,75 @@ const InvoiceForm = ({ data, onChange }: InvoiceFormProps) => {
         </CardContent>
       </Card>
 
-      {/* Notes & Signature */}
+      {/* Bank Account Info */}
+      <Card className="shadow-soft border border-slate-200">
+        <CardHeader className="pb-2 md:pb-4 px-3 md:px-6 pt-3 md:pt-6">
+          <CardTitle className="text-sm md:text-lg font-semibold flex items-center gap-2">
+            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-lime-600" />
+            Info Rekening
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 md:space-y-3 px-3 md:px-6 pb-3 md:pb-6">
+          <div>
+            <Label htmlFor="bankName" className="text-xs md:text-sm">Nama Bank</Label>
+            <Input
+              id="bankName"
+              value={data.bankName}
+              onChange={(e) => handleChange('bankName', e.target.value)}
+              placeholder="BCA, Mandiri, BNI, dll"
+              className="h-8 md:h-10 text-xs md:text-sm mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="bankAccountNumber" className="text-xs md:text-sm">Nomor Rekening</Label>
+            <Input
+              id="bankAccountNumber"
+              value={data.bankAccountNumber}
+              onChange={(e) => handleChange('bankAccountNumber', e.target.value)}
+              placeholder="1234567890"
+              className="h-8 md:h-10 text-xs md:text-sm mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="bankAccountName" className="text-xs md:text-sm">Atas Nama</Label>
+            <Input
+              id="bankAccountName"
+              value={data.bankAccountName}
+              onChange={(e) => handleChange('bankAccountName', e.target.value)}
+              placeholder="Nama pemilik rekening"
+              className="h-8 md:h-10 text-xs md:text-sm mt-1"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Terms & Conditions */}
       <Card className="shadow-soft border border-slate-200">
         <CardHeader className="pb-2 md:pb-4 px-3 md:px-6 pt-3 md:pt-6">
           <CardTitle className="text-sm md:text-lg font-semibold flex items-center gap-2">
             <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#ccff00]" />
+            Ketentuan Lainnya
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+          <div>
+            <Label className="text-xs md:text-sm">Syarat & Ketentuan</Label>
+            <Textarea
+              value={data.termsAndConditions}
+              onChange={(e) => handleChange('termsAndConditions', e.target.value)}
+              placeholder="Ketentuan pembayaran, kebijakan pembatalan, dll (opsional)"
+              rows={3}
+              className="text-xs md:text-sm mt-1 resize-none"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Notes & Signature */}
+      <Card className="shadow-soft border border-slate-200">
+        <CardHeader className="pb-2 md:pb-4 px-3 md:px-6 pt-3 md:pt-6">
+          <CardTitle className="text-sm md:text-lg font-semibold flex items-center gap-2">
+            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-lime-600" />
             Catatan & TTD
           </CardTitle>
         </CardHeader>

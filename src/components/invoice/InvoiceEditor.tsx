@@ -277,13 +277,22 @@ const InvoiceEditor = () => {
               </div>
             </div>
 
-            {/* Preview container - Optimized for mobile */}
+            {/* Preview container - Optimized for mobile with pinch-to-zoom */}
             <div 
-              className="relative bg-slate-100 rounded-xl md:rounded-2xl p-2 md:p-4 overflow-auto border-2 border-slate-200" 
-              style={{ maxHeight: 'calc(100vh - 200px)' }}
+              className="relative bg-slate-100 rounded-xl md:rounded-2xl p-2 md:p-4 border-2 border-slate-200 overflow-auto md:overflow-auto touch-pan-x touch-pan-y" 
+              style={{ 
+                maxHeight: 'calc(100vh - 200px)',
+                WebkitOverflowScrolling: 'touch'
+              }}
             >
-              <div className="flex justify-center w-full">
-                <div className="transform scale-[0.35] sm:scale-[0.4] md:scale-[0.5] lg:scale-[0.55] origin-top w-full flex justify-center">
+              <div className="flex justify-center w-full min-w-fit">
+                <div 
+                  className="origin-top-left md:origin-top md:flex md:justify-center"
+                  style={{
+                    transform: 'scale(0.45)',
+                    width: 'fit-content'
+                  }}
+                >
                   <InvoicePreview
                     ref={previewRef}
                     data={invoiceData}

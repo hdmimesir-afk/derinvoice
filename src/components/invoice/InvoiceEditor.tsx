@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Download, Eye, FileEdit, ImageIcon } from 'lucide-react';
+import { Download, Eye, FileEdit, ImageIcon, Save, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -7,6 +7,8 @@ import InvoiceForm from './InvoiceForm';
 import InvoicePreview from './InvoicePreview';
 import HeaderUploader from './HeaderUploader';
 import ColorPicker from './ColorPicker';
+import TemplateSaveDialog from './TemplateSaveDialog';
+import TemplateLoadDialog from './TemplateLoadDialog';
 import { InvoiceData, defaultInvoiceData } from '@/types/invoice';
 import { usePrint } from '@/hooks/use-print';
 import { useExportImage } from '@/hooks/use-export-image';
@@ -14,6 +16,8 @@ import { useExportImage } from '@/hooks/use-export-image';
 const InvoiceEditor = () => {
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(defaultInvoiceData);
   const [mobileTab, setMobileTab] = useState<'form' | 'preview'>('form');
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [loadDialogOpen, setLoadDialogOpen] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
   const { handlePrint } = usePrint(previewRef);
@@ -25,6 +29,10 @@ const InvoiceEditor = () => {
 
   const handleColorChange = (colors: { primaryColor: string; secondaryColor: string; accentColor: string }) => {
     setInvoiceData({ ...invoiceData, ...colors });
+  };
+
+  const handleLoadTemplate = (data: InvoiceData) => {
+    setInvoiceData(data);
   };
 
   return (
@@ -56,6 +64,28 @@ const InvoiceEditor = () => {
           <p className="text-slate-600 text-xs md:text-base lg:text-lg max-w-2xl mx-auto hidden md:block">
             Isi form di bawah dan download invoice Anda dalam format PDF atau PNG
           </p>
+        </div>
+
+        {/* Template Actions - Mobile */}
+        <div className="flex md:hidden gap-2 mb-3">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setLoadDialogOpen(true)}
+            className="flex-1 h-9 text-xs"
+          >
+            <FolderOpen className="w-3.5 h-3.5 mr-1" />
+            Muat
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setSaveDialogOpen(true)}
+            className="flex-1 h-9 text-xs"
+          >
+            <Save className="w-3.5 h-3.5 mr-1" />
+            Simpan
+          </Button>
         </div>
 
         {/* Mobile Tab Switcher */}
@@ -129,7 +159,7 @@ const InvoiceEditor = () => {
             </Card>
 
             {/* Form */}
-            <ScrollArea className="h-[calc(100vh-400px)] md:h-[500px] pr-1 md:pr-4">
+            <ScrollArea className="h-[calc(100vh-500px)] md:h-[400px] pr-1 md:pr-4">
               <InvoiceForm data={invoiceData} onChange={setInvoiceData} />
             </ScrollArea>
           </div>
@@ -142,14 +172,32 @@ const InvoiceEditor = () => {
                 <Eye className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="font-medium text-sm md:text-base">Preview Invoice</span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setLoadDialogOpen(true)}
+                  className="h-9"
+                >
+                  <FolderOpen className="w-4 h-4 mr-2" />
+                  Muat Template
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setSaveDialogOpen(true)}
+                  className="h-9"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Simpan Template
+                </Button>
                 <Button
                   size="lg"
                   className="bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] px-4 md:px-6 py-2 md:py-3 text-sm md:text-base"
                   onClick={handlePrint}
                 >
                   <Download className="w-4 h-4 md:w-5 md:h-5 mr-2 text-[#ccff00]" />
-                  Download PDF
+                  PDF
                 </Button>
                 <Button
                   size="lg"
@@ -158,7 +206,7 @@ const InvoiceEditor = () => {
                   onClick={handleExportPNG}
                 >
                   <ImageIcon className="w-4 h-4 md:w-5 md:h-5 mr-2" />
-                  Download PNG
+                  PNG
                 </Button>
               </div>
             </div>
@@ -180,6 +228,18 @@ const InvoiceEditor = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <TemplateSaveDialog
+        open={saveDialogOpen}
+        onOpenChange={setSaveDialogOpen}
+        invoiceData={invoiceData}
+      />
+      <TemplateLoadDialog
+        open={loadDialogOpen}
+        onOpenChange={setLoadDialogOpen}
+        onLoadTemplate={handleLoadTemplate}
+      />
     </section>
   );
 };

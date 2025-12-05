@@ -15,6 +15,12 @@ import { InvoiceData } from '@/types/invoice';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { z } from 'zod';
+
+const templateNameSchema = z.string()
+  .trim()
+  .min(1, 'Nama template tidak boleh kosong')
+  .max(100, 'Nama template maksimal 100 karakter');
 
 interface TemplateSaveDialogProps {
   open: boolean;
@@ -28,8 +34,9 @@ const TemplateSaveDialog = ({ open, onOpenChange, invoiceData }: TemplateSaveDia
   const { user } = useAuth();
 
   const handleSave = async () => {
-    if (!templateName.trim()) {
-      toast.error('Masukkan nama template');
+    const validationResult = templateNameSchema.safeParse(templateName);
+    if (!validationResult.success) {
+      toast.error(validationResult.error.errors[0].message);
       return;
     }
 
@@ -43,7 +50,7 @@ const TemplateSaveDialog = ({ open, onOpenChange, invoiceData }: TemplateSaveDia
       const { error } = await supabase
         .from('invoice_templates')
         .insert([{
-          name: templateName.trim(),
+          name: validationResult.data,
           invoice_data: JSON.parse(JSON.stringify(invoiceData)),
           user_id: user.id,
         }]);

@@ -7,6 +7,8 @@ export interface InvoiceItem {
   price: number;
 }
 
+export type Language = 'id' | 'en';
+
 export interface InvoiceData {
   companyName: string;
   companyAddress: string;
@@ -34,6 +36,8 @@ export interface InvoiceData {
   primaryColor: string;
   secondaryColor: string;
   accentColor: string;
+  // Language
+  language: Language;
 }
 
 export interface InvoiceTemplate {
@@ -78,4 +82,5 @@ export const defaultInvoiceData: InvoiceData = {
   primaryColor: '#8B1E3F',
   secondaryColor: '#D4A5A5',
   accentColor: '#6B1530',
+  language: 'id',
 };

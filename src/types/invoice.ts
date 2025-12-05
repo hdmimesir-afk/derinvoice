@@ -1,6 +1,8 @@
 export interface InvoiceItem {
   id: string;
   description: string;
+  subDescription: string; // Date range or additional info
+  details: string; // Package includes or item details (bullet points)
   quantity: number;
   price: number;
 }
@@ -58,8 +60,14 @@ export const defaultInvoiceData: InvoiceData = {
   invoiceDate: new Date().toISOString().split('T')[0],
   dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   items: [
-    { id: '1', description: 'Layanan Konsultasi', quantity: 1, price: 500000 },
-    { id: '2', description: 'Desain Logo', quantity: 1, price: 1500000 },
+    { 
+      id: '1', 
+      description: 'Layanan Konsultasi', 
+      subDescription: '1 - 7 Desember 2024',
+      details: '- Konsultasi bisnis\n- Analisis kebutuhan\n- Rekomendasi solusi',
+      quantity: 1, 
+      price: 500000 
+    },
   ],
   notes: 'Terima kasih atas kepercayaan Anda.',
   signature: '',
@@ -67,7 +75,7 @@ export const defaultInvoiceData: InvoiceData = {
   bankAccountNumber: '',
   bankAccountName: '',
   termsAndConditions: '',
-  primaryColor: '#5A8F7B',
-  secondaryColor: '#7AB89D',
-  accentColor: '#3D6B5C',
+  primaryColor: '#8B1E3F',
+  secondaryColor: '#D4A5A5',
+  accentColor: '#6B1530',
 };

@@ -15,7 +15,7 @@ const formatCurrency = (amount: number) => {
 
 const formatDate = (dateString: string) => {
   if (!dateString) return '-';
-  return new Date(dateString).toLocaleDateString('id-ID', {
+  return new Date(dateString).toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -24,233 +24,214 @@ const formatDate = (dateString: string) => {
 
 const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
   ({ data }, ref) => {
-    const subtotal = data.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
-    const { primaryColor, secondaryColor, accentColor } = data;
+    const total = data.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+    const { primaryColor, secondaryColor } = data;
 
     return (
       <div
         ref={ref}
-        className="invoice-preview bg-white text-gray-900 shadow-medium rounded-lg overflow-hidden"
+        className="invoice-preview bg-white text-gray-900 shadow-medium overflow-hidden"
         style={{
           width: '210mm',
           minHeight: '297mm',
           fontFamily: 'Poppins, sans-serif',
         }}
       >
-        {/* Custom Header Image */}
-        {data.headerImage && (
-          <div className="w-full">
-            <img
-              src={data.headerImage}
-              alt="Invoice Header"
-              className="w-full h-auto object-cover"
-            />
-          </div>
-        )}
-
-        {/* Header - Only show if no custom header image */}
-        {!data.headerImage && (
-          <div
-            className="p-8"
-            style={{
-              background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
-              color: 'white',
-            }}
+        {/* Header with wave pattern */}
+        <div
+          className="relative overflow-hidden"
+          style={{
+            background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+            minHeight: '180px',
+          }}
+        >
+          {/* Decorative wave pattern */}
+          <svg
+            className="absolute inset-0 w-full h-full opacity-20"
+            viewBox="0 0 800 200"
+            preserveAspectRatio="none"
           >
-            <div className="flex justify-between items-start">
-              <div className="flex items-start gap-4">
-                {data.companyLogo && (
-                  <img
-                    src={data.companyLogo}
-                    alt="Company Logo"
-                    className="w-16 h-16 object-contain rounded"
-                  />
-                )}
-                <div>
-                  <h1 className="text-3xl font-bold mb-2">{data.companyName}</h1>
-                  <p className="text-sm opacity-90">{data.companyAddress}</p>
-                  <p className="text-sm opacity-90">{data.companyPhone}</p>
-                  <p className="text-sm opacity-90">{data.companyEmail}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-4xl font-bold mb-2">INVOICE</div>
-              </div>
-            </div>
-          </div>
-        )}
+            <path
+              d="M0,100 C150,150 350,50 500,100 C650,150 750,50 800,100 L800,200 L0,200 Z"
+              fill="rgba(255,255,255,0.1)"
+            />
+            <path
+              d="M0,120 C200,80 400,160 600,100 C750,60 800,120 800,120 L800,200 L0,200 Z"
+              fill="rgba(255,255,255,0.15)"
+            />
+            <path
+              d="M0,150 C100,130 300,180 500,140 C700,100 800,160 800,160 L800,200 L0,200 Z"
+              fill="rgba(255,255,255,0.1)"
+            />
+          </svg>
 
-        {/* Invoice Title - Show only if custom header exists */}
-        {data.headerImage && (
-          <div className="px-8 pt-6 pb-2">
-            <div className="text-right">
-              <div
-                className="text-4xl font-bold"
-                style={{ color: primaryColor }}
-              >
-                INVOICE
+          {/* Header content */}
+          <div className="relative z-10 p-6">
+            {/* Company Logo */}
+            {data.companyLogo && (
+              <div className="flex items-center gap-2 mb-4">
+                <img
+                  src={data.companyLogo}
+                  alt="Company Logo"
+                  className="w-10 h-10 object-contain"
+                />
+                <span className="text-white text-sm font-medium">{data.companyName}</span>
               </div>
-            </div>
+            )}
+            
+            {/* INVOICE Title */}
+            <h1 
+              className="text-6xl md:text-7xl font-black text-white tracking-tight"
+              style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}
+            >
+              INVOICE
+            </h1>
           </div>
-        )}
+        </div>
 
         {/* Content */}
-        <div className="p-8 bg-white">
-          {/* Invoice Details & Client */}
-          <div className="grid grid-cols-2 gap-8 mb-8">
+        <div className="px-8 py-6">
+          {/* Bill To & Date */}
+          <div className="flex justify-between items-start mb-8">
             <div>
-              <h3 
-                className="text-sm font-semibold uppercase tracking-wider mb-3"
-                style={{ color: accentColor }}
+              <p 
+                className="text-sm font-semibold uppercase tracking-wider mb-1"
+                style={{ color: primaryColor }}
               >
-                Tagih Kepada
-              </h3>
-              <p className="font-semibold text-lg">{data.clientName}</p>
-              <p className="text-gray-600 text-sm">{data.clientAddress}</p>
-              <p className="text-gray-600 text-sm">{data.clientPhone}</p>
-              <p className="text-gray-600 text-sm">{data.clientEmail}</p>
+                BILL TO
+              </p>
+              <p className="text-lg font-bold text-gray-900">{data.clientName}</p>
             </div>
             <div className="text-right">
-              <div className="space-y-2">
-                <div>
-                  <span className="text-sm text-gray-500">No. Invoice:</span>
-                  <span className="ml-2 font-semibold">{data.invoiceNumber}</span>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500">Tanggal:</span>
-                  <span className="ml-2">{formatDate(data.invoiceDate)}</span>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500">Jatuh Tempo:</span>
-                  <span className="ml-2">{formatDate(data.dueDate)}</span>
-                </div>
-              </div>
+              <span className="text-sm text-gray-500 font-medium">Date : </span>
+              <span className="text-sm text-gray-700">{formatDate(data.invoiceDate)}</span>
             </div>
           </div>
 
           {/* Items Table */}
-          <div className="mb-8">
-            <table className="w-full">
-              <thead>
-                <tr style={{ backgroundColor: primaryColor }}>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-white">Deskripsi</th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-white">Jumlah</th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-white">Harga</th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-white">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.items.map((item, index) => (
-                  <tr
-                    key={item.id}
-                    className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}
-                    style={{ borderBottom: `1px solid ${primaryColor}20` }}
-                  >
-                    <td className="px-4 py-3 text-sm">{item.description || '-'}</td>
-                    <td className="px-4 py-3 text-sm text-center">{item.quantity}</td>
-                    <td className="px-4 py-3 text-sm text-right">{formatCurrency(item.price)}</td>
-                    <td className="px-4 py-3 text-sm text-right font-medium">
-                      {formatCurrency(item.quantity * item.price)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mb-6">
+            {/* Table Header */}
+            <div 
+              className="grid grid-cols-12 gap-4 py-3 px-4 text-sm font-semibold uppercase tracking-wider"
+              style={{ 
+                background: `linear-gradient(90deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+                color: 'white'
+              }}
+            >
+              <div className="col-span-5">ITEM DESCRIPTION</div>
+              <div className="col-span-2 text-center">QUANTITY</div>
+              <div className="col-span-2 text-center">PRICE</div>
+              <div className="col-span-3 text-right">TOTAL</div>
+            </div>
+
+            {/* Table Body */}
+            {data.items.map((item) => (
+              <div key={item.id} className="border-b border-gray-100">
+                {/* Item Row */}
+                <div className="grid grid-cols-12 gap-4 py-4 px-4 items-start">
+                  <div className="col-span-5">
+                    <p className="font-bold text-gray-900 uppercase">{item.description || '-'}</p>
+                    {item.subDescription && (
+                      <p className="text-sm text-gray-500 mt-1">{item.subDescription}</p>
+                    )}
+                  </div>
+                  <div className="col-span-2 text-center text-gray-700">{item.quantity}</div>
+                  <div className="col-span-2 text-center text-gray-700">{formatCurrency(item.price)}</div>
+                  <div className="col-span-3 text-right font-medium text-gray-900">
+                    {formatCurrency(item.quantity * item.price)}
+                  </div>
+                </div>
+
+                {/* Item Details */}
+                {item.details && (
+                  <div className="px-4 pb-4">
+                    <p className="font-semibold text-gray-800 mb-2">Paket Include :</p>
+                    <div className="text-sm text-gray-600 whitespace-pre-line">
+                      {item.details}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
-          {/* Totals */}
+          {/* Separator Line */}
+          <div 
+            className="h-1 w-full mb-6"
+            style={{ background: `linear-gradient(90deg, ${primaryColor} 0%, ${secondaryColor} 100%)` }}
+          />
+
+          {/* Total */}
           <div className="flex justify-end mb-8">
-            <div className="w-64">
-              <div className="flex justify-between py-2 border-b border-gray-200">
-                <span className="text-gray-600">Subtotal</span>
-                <span>{formatCurrency(subtotal)}</span>
-              </div>
-              <div
-                className="flex justify-between py-3 text-lg font-bold"
-                style={{ color: primaryColor }}
-              >
-                <span>TOTAL</span>
-                <span>{formatCurrency(subtotal)}</span>
-              </div>
+            <div className="flex items-center gap-8">
+              <span className="text-lg font-bold text-gray-700">Total :</span>
+              <span className="text-lg font-medium text-gray-900">{formatCurrency(total)}</span>
             </div>
           </div>
 
-          {/* Bank Account Info */}
-          {(data.bankName || data.bankAccountNumber || data.bankAccountName) && (
-            <div
-              className="p-4 rounded-lg mb-6"
-              style={{ backgroundColor: `${primaryColor}10` }}
-            >
-              <h3 className="text-sm font-semibold mb-3" style={{ color: primaryColor }}>
-                Informasi Pembayaran
-              </h3>
-              <div className="space-y-1 text-sm text-gray-600">
-                {data.bankName && (
-                  <p><span className="font-medium">Bank:</span> {data.bankName}</p>
-                )}
-                {data.bankAccountNumber && (
-                  <p><span className="font-medium">No. Rekening:</span> {data.bankAccountNumber}</p>
-                )}
-                {data.bankAccountName && (
-                  <p><span className="font-medium">Atas Nama:</span> {data.bankAccountName}</p>
-                )}
+          {/* Notes & Payment Info */}
+          <div className="mt-auto">
+            {data.notes && (
+              <div className="mb-4">
+                <p className="font-bold text-gray-800 uppercase text-sm mb-2">NOTES :</p>
+                <p className="text-sm text-gray-600">{data.notes}</p>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Terms and Conditions */}
-          {data.termsAndConditions && (
-            <div
-              className="p-4 rounded-lg mb-6 border"
-              style={{ borderColor: `${primaryColor}30` }}
-            >
-              <h3 className="text-sm font-semibold mb-2" style={{ color: primaryColor }}>
-                Syarat & Ketentuan
-              </h3>
-              <p className="text-sm text-gray-600 whitespace-pre-line">{data.termsAndConditions}</p>
-            </div>
-          )}
-
-          {/* Notes */}
-          {data.notes && (
-            <div
-              className="p-4 rounded-lg mb-6"
-              style={{ backgroundColor: `${primaryColor}10` }}
-            >
-              <h3 className="text-sm font-semibold mb-2" style={{ color: primaryColor }}>
-                Catatan
-              </h3>
-              <p className="text-sm text-gray-600">{data.notes}</p>
-            </div>
-          )}
-
-          {/* Signature */}
-          {data.signature && (
-            <div className="flex justify-end">
-              <div className="text-center">
-                <p className="text-sm text-gray-500 mb-2">Tanda Tangan</p>
-                <img
-                  src={data.signature}
-                  alt="Tanda Tangan"
-                  className="h-20 object-contain mx-auto"
-                />
-                <div className="border-t border-gray-300 mt-2 pt-2 px-8">
-                  <p className="text-sm font-medium">{data.companyName}</p>
+            {/* Bank Account Info */}
+            {(data.bankName || data.bankAccountNumber || data.bankAccountName) && (
+              <div className="mb-6">
+                <p 
+                  className="text-xs font-semibold uppercase tracking-wider mb-2"
+                  style={{ color: primaryColor }}
+                >
+                  SILAKAN MELAKUKAN PEMBAYARAN KE :
+                </p>
+                <div className="text-sm text-gray-800">
+                  {data.bankAccountName && <p className="font-bold">{data.bankAccountName}</p>}
+                  {data.bankName && <p>{data.bankName}</p>}
+                  {data.bankAccountNumber && <p>{data.bankAccountNumber}</p>}
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
 
-        {/* Footer */}
-        <div
-          className="px-8 py-4 text-center text-sm"
-          style={{
-            backgroundColor: `${primaryColor}10`,
-            color: primaryColor,
-          }}
-        >
-          Terima kasih atas kepercayaan Anda • {data.companyName}
+            {/* Terms and Conditions */}
+            {data.termsAndConditions && (
+              <div className="mb-6">
+                <p className="font-bold text-gray-800 uppercase text-sm mb-2">Syarat & Ketentuan :</p>
+                <p className="text-sm text-gray-600 whitespace-pre-line">{data.termsAndConditions}</p>
+              </div>
+            )}
+
+            {/* Footer with company logo */}
+            <div className="flex justify-between items-end pt-4 border-t border-gray-100">
+              {/* Signature */}
+              {data.signature && (
+                <div className="text-center">
+                  <img
+                    src={data.signature}
+                    alt="Tanda Tangan"
+                    className="h-16 object-contain"
+                  />
+                  <div className="border-t border-gray-300 mt-2 pt-1 px-4">
+                    <p className="text-xs text-gray-500">{data.companyName}</p>
+                  </div>
+                </div>
+              )}
+              
+              {/* Company Logo Footer */}
+              {data.companyLogo && (
+                <div className="flex items-center gap-2">
+                  <img
+                    src={data.companyLogo}
+                    alt="Company Logo"
+                    className="w-8 h-8 object-contain"
+                  />
+                  <span className="text-sm font-medium text-gray-700">{data.companyName}</span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );

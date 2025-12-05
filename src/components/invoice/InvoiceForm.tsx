@@ -35,6 +35,8 @@ const InvoiceForm = ({ data, onChange }: InvoiceFormProps) => {
     const newItem: InvoiceItem = {
       id: Date.now().toString(),
       description: '',
+      subDescription: '',
+      details: '',
       quantity: 1,
       price: 0,
     };
@@ -303,91 +305,79 @@ const InvoiceForm = ({ data, onChange }: InvoiceFormProps) => {
         </CardHeader>
         <CardContent className="space-y-3 px-3 md:px-6 pb-3 md:pb-6">
           {data.items.map((item, index) => (
-            <div key={item.id}>
-              {index > 0 && <Separator className="my-2 md:my-3" />}
-              {/* Mobile Layout */}
-              <div className="md:hidden space-y-2">
+            <div key={item.id} className="space-y-3">
+              {index > 0 && <Separator className="my-3 md:my-4" />}
+              
+              {/* Item Header with Delete Button */}
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-medium text-slate-500">Item #{index + 1}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => removeItem(item.id)}
+                  disabled={data.items.length === 1}
+                  className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
+
+              {/* Description */}
+              <div>
+                <Label className="text-xs md:text-sm">Nama Item</Label>
                 <Input
                   value={item.description}
                   onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
-                  placeholder="Deskripsi item"
-                  className="h-8 text-xs"
+                  placeholder="Nama layanan atau produk"
+                  className="h-8 md:h-10 text-xs md:text-sm mt-1"
                 />
-                <div className="flex gap-2 items-center">
-                  <div className="flex-1">
-                    <Input
-                      type="number"
-                      min="1"
-                      value={item.quantity}
-                      onChange={(e) => handleItemChange(item.id, 'quantity', parseInt(e.target.value) || 1)}
-                      placeholder="Qty"
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                  <div className="flex-[2]">
-                    <Input
-                      type="number"
-                      min="0"
-                      value={item.price}
-                      onChange={(e) => handleItemChange(item.id, 'price', parseFloat(e.target.value) || 0)}
-                      placeholder="Harga (Rp)"
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => removeItem(item.id)}
-                    disabled={data.items.length === 1}
-                    className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                </div>
               </div>
 
-              {/* Desktop Layout */}
-              <div className="hidden md:grid grid-cols-12 gap-3 items-end">
-                <div className="col-span-5 space-y-1">
-                  <Label className="text-xs">Deskripsi</Label>
-                  <Input
-                    value={item.description}
-                    onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
-                    placeholder="Nama layanan atau produk"
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div className="col-span-2 space-y-1">
-                  <Label className="text-xs">Jumlah</Label>
+              {/* Sub Description */}
+              <div>
+                <Label className="text-xs md:text-sm">Keterangan Tambahan</Label>
+                <Input
+                  value={item.subDescription}
+                  onChange={(e) => handleItemChange(item.id, 'subDescription', e.target.value)}
+                  placeholder="Contoh: 24 - 29 November 2024"
+                  className="h-8 md:h-10 text-xs md:text-sm mt-1"
+                />
+              </div>
+
+              {/* Quantity & Price Row */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-xs md:text-sm">Jumlah</Label>
                   <Input
                     type="number"
                     min="1"
                     value={item.quantity}
                     onChange={(e) => handleItemChange(item.id, 'quantity', parseInt(e.target.value) || 1)}
-                    className="h-9 text-sm"
+                    className="h-8 md:h-10 text-xs md:text-sm mt-1"
                   />
                 </div>
-                <div className="col-span-3 space-y-1">
-                  <Label className="text-xs">Harga (Rp)</Label>
+                <div>
+                  <Label className="text-xs md:text-sm">Harga (Rp)</Label>
                   <Input
                     type="number"
                     min="0"
                     value={item.price}
                     onChange={(e) => handleItemChange(item.id, 'price', parseFloat(e.target.value) || 0)}
-                    className="h-9 text-sm"
+                    className="h-8 md:h-10 text-xs md:text-sm mt-1"
                   />
                 </div>
-                <div className="col-span-2 flex justify-end">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => removeItem(item.id)}
-                    disabled={data.items.length === 1}
-                    className="h-9 w-9 text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
+              </div>
+
+              {/* Details/Package Includes */}
+              <div>
+                <Label className="text-xs md:text-sm">Detail Paket (opsional)</Label>
+                <Textarea
+                  value={item.details}
+                  onChange={(e) => handleItemChange(item.id, 'details', e.target.value)}
+                  placeholder="- Item include 1&#10;- Item include 2&#10;- Item include 3"
+                  rows={3}
+                  className="text-xs md:text-sm mt-1 resize-none"
+                />
               </div>
             </div>
           ))}
